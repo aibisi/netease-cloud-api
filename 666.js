@@ -9,19 +9,21 @@ const method = $request.method;
 
 if (url.includes("/GetTrainingClass") && method === "GET") {
   try {
-    // 解析原始响应体
     let body = JSON.parse($response.body);
     
-    // 修改 Data.List[0] 的字段
+    // 防御性检查
     if (body?.Data?.List?.[0]) {
+      console.log(`原始 Organizers: ${body.Data.List[0].Organizers}`);
       body.Data.List[0].Organizers = "修改测试";
       body.Data.List[0].Name = "低压电工教程";
+      console.log(`修改后 Organizers: ${body.Data.List[0].Organizers}`);
+    } else {
+      console.log("Data.List 为空或结构异常");
     }
     
-    // 返回修改后的响应体
     $done({ body: JSON.stringify(body) });
   } catch (error) {
-    console.log(`处理失败: ${error}`);
+    console.log("JSON 解析失败: " + error.message);
     $done({});
   }
 } else {
